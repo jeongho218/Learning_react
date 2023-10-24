@@ -1,5 +1,6 @@
 // import logo from "./logo.svg";
 import "./App.css";
+import { useState } from "react";
 
 function Header(props) {
   return (
@@ -30,7 +31,7 @@ const Nav = (props) => {
           href={"/read/" + t.id}
           onClick={(event) => {
             event.preventDefault();
-            props.onChangeMode(event.target.id);
+            props.onChangeMode(Number(event.target.id));
           }}
         >
           {t.title}
@@ -55,26 +56,43 @@ const Article = (props) => {
 };
 
 function App() {
+  const [mode, setMode] = useState("WELCOME");
+  const [id, setId] = useState(null);
   const topics = [
     { id: 1, title: "HTML", body: "HTML is ..." },
     { id: 2, title: "CSS", body: "CSS is ..." },
     { id: 3, title: "JavaScript", body: "JavaScript is ..." },
   ];
+  let content = null;
+  if (mode === "WELCOME") {
+    content = <Article title="Welcome" body="Hello, WEB"></Article>;
+  } else if (mode === "READ") {
+    let title,
+      body = null;
+    for (let i = 0; i < topics.length; i++) {
+      if (topics[i].id === id) {
+        title = topics[i].title;
+        body = topics[i].body;
+      }
+    }
+    content = <Article title={title} body={body}></Article>;
+  }
   return (
     <div>
       <Header
         title="WEB"
         onChangeMode={() => {
-          alert("Header");
+          setMode("WELCOME");
         }}
       ></Header>
       <Nav
         topics={topics}
-        onChangeMode={(id) => {
-          alert(id);
+        onChangeMode={(_id) => {
+          setMode("READ");
+          setId(_id);
         }}
       ></Nav>
-      <Article title="Welcome" body="Hello, WEB"></Article>
+      {content}
     </div>
   );
 }
